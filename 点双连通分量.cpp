@@ -2,7 +2,7 @@
 using namespace std;
 int n,m,tot,cntt,cnt,ver[5000050],hed[5000050],nxt[5000050],rt,siz[5000050];
 int ins[5000050],low[5000050],dfn[5000050],cut[5000050];
-vector<int> dcc[5000050];
+vector<int> vcc[5000050];
 stack<int> s;
 void add(int a,int b){
 	ver[++tot]=b,nxt[tot]=hed[a],hed[a]=tot;
@@ -12,7 +12,7 @@ void tarjan(int x){
 	ins[x]=1;
 	s.push(x);
 	if(!siz[x]){
-		dcc[++cntt].push_back(x);
+		vcc[++cntt].push_back(x);
 		return ;
 	}
 	int ch=0;
@@ -33,9 +33,9 @@ void tarjan(int x){
 					z=s.top();
 					ins[z]=0;
 					s.pop();
-					dcc[cntt].push_back(z);
+					vcc[cntt].push_back(z);
 				}while(y!=z);
-				dcc[cntt].push_back(x);
+				vcc[cntt].push_back(x);
 			}
 		}
 		else{
@@ -67,9 +67,9 @@ int main(){
 	}
 	cout<<cntt<<endl;
 	for(int i=1;i<=cntt;i++){
-		cout<<dcc[i].size()<<" ";
-		for(int j=0;j<dcc[i].size();j++){
-			cout<<dcc[i][j]<<" ";
+		cout<<vcc[i].size()<<" ";
+		for(int j=0;j<vcc[i].size();j++){
+			cout<<vcc[i][j]<<" ";
 		}
 		cout<<endl;
 	}
