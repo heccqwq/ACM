@@ -1,11 +1,9 @@
-#include<iostream>
-#include<cstdio>
-#include<algorithm> 
+#include<bits/stdc++.h>
 using namespace std;
 const int inf=1e9;
 int root,tot,n,tt,a[1000005];
 struct Splay{
-	int fa,ch[5],val,tag,size;
+	int fa,ch[3],val,tag,size;
 }t[1000005];
 void maintain(int x) {t[x].size=t[t[x].ch[0]].size+t[t[x].ch[1]].size+1;}
 void pushdown(int x){
@@ -46,7 +44,7 @@ void rotate(int x){
 	t[y].fa=x;
 	maintain(y);
 	maintain(x);
-}//旋转第二步 
+}//????? 
 void splay(int x,int goal){
 	while(t[x].fa!=goal){
 		//cout<<1;
@@ -56,23 +54,24 @@ void splay(int x,int goal){
 		rotate(x);
 	}
 	if(goal==0) root=x;
-}
-int kth(int p,int rank){
-	if(!p){
-		return 0;
+}//????? 
+int kth(int k){
+	int cur=root;
+	while(1){
+		//cout<<1145;
+		pushdown(cur);
+		if(k<=t[t[cur].ch[0]].size)
+		cur=t[cur].ch[0];
+		else{
+			k-=t[t[cur].ch[0]].size+1;
+			if(!k) return cur;
+			cur=t[cur].ch[1];
+		}
 	}
-	if(t[t[p].ch[0]].size>=rank){
-		return kth(t[p].ch[0],rank);
-	}
-	if(t[t[p].ch[0]].size+1>=rank){
-		return p;
-	}
-	return kth(t[p].ch[1],rank-t[t[p].ch[0]].size-1);
-	
-}
+}//?k??? 
 void flip(int l,int r){
-	int ll=kth(root,l-1);
-	int rr=kth(root,r+1);
+	int ll=kth(l-1);
+	int rr=kth(r+1);
 	splay(ll,0);
 	splay(rr,ll);
 	t[t[t[root].ch[1]].ch[0]].tag^=1;
