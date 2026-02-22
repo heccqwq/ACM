@@ -15,7 +15,9 @@ void pushdown(int x){
 	}
 }
 int build_tree(int x,int l,int r){
-	if(l>r) return 0;
+	if(l>r){
+		return 0;
+	}
 	int mid=(l+r)>>1;
 	int now=++tot;
 	t[now].ch[0]=t[now].ch[1]=0;
@@ -26,11 +28,8 @@ int build_tree(int x,int l,int r){
 	t[now].ch[1]=build_tree(now,mid+1,r); 
 	maintain(now);
 	return now;
-} 
-
-bool get(int x) {return x==t[t[x].fa].ch[1]; }
+}
 void rotate(int x){
-	//cout<<1;
 	int y=t[x].fa;
 	int z=t[y].fa;
 	int kid=t[y].ch[1]==x;
@@ -44,31 +43,36 @@ void rotate(int x){
 	t[y].fa=x;
 	maintain(y);
 	maintain(x);
-}//????? 
+}
 void splay(int x,int goal){
 	while(t[x].fa!=goal){
-		//cout<<1;
-		int y=t[x].fa,z=t[y].fa;
-		if(z!=goal)
-		(get(y)^get(x))?rotate(x):rotate(y);
+		int y=t[x].fa;
+		int z=t[y].fa;
+		if(z!=goal){
+			(t[z].ch[1]==y)^(t[y].ch[1]==x)?rotate(x):rotate(y);
+		}
 		rotate(x);
 	}
-	if(goal==0) root=x;
-}//????? 
+	if(goal==0){
+		root=x;
+	}
+}
 int kth(int k){
 	int cur=root;
 	while(1){
-		//cout<<1145;
 		pushdown(cur);
-		if(k<=t[t[cur].ch[0]].size)
-		cur=t[cur].ch[0];
+		if(k<=t[t[cur].ch[0]].size){
+			cur=t[cur].ch[0];
+		}
 		else{
 			k-=t[t[cur].ch[0]].size+1;
-			if(!k) return cur;
+			if(!k){
+				return cur;
+			}
 			cur=t[cur].ch[1];
 		}
 	}
-}//?k??? 
+}
 void flip(int l,int r){
 	int ll=kth(l-1);
 	int rr=kth(r+1);
@@ -78,9 +82,15 @@ void flip(int l,int r){
 }
 void write(int x){
 	pushdown(x);
-	if(t[x].ch[0]) write(t[x].ch[0]);
-	if(t[x].val!=inf&&t[x].val!=-inf) cout<<t[x].val<<" ";
-	if(t[x].ch[1]) write(t[x].ch[1]);
+	if(t[x].ch[0]){
+		write(t[x].ch[0]);
+	}
+	if(t[x].val!=inf&&t[x].val!=-inf){
+		cout<<t[x].val<<" ";
+	}
+	if(t[x].ch[1]){
+		write(t[x].ch[1]);
+	}
 }
 signed main(){
 	ios::sync_with_stdio(0);
