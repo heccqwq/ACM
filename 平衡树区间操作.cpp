@@ -43,8 +43,7 @@ void splay(int x,int goal){
     while(a[x].fa!=goal){
         int y=a[x].fa,z=a[y].fa;
         if(z!=goal){
-            if((a[z].ch[1]==y)==(a[y].ch[1]==x)) rotate(y);
-            else rotate(x);
+        	(a[z].ch[1]==y)^(a[y].ch[1]==x)?Rotate(x):Rotate(y);
         }
         rotate(x);
     }

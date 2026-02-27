@@ -7,7 +7,7 @@ void tarjan(int u){
 		if(!dfn[v]){
 			tarjan(v);
 			low[u]=min(low[u],low[v]);
-			if(low[v]>=dfn[u]){
+			if(dfn[u]<=low[v]){
 				fl++;
 				if(fl>1||u!=root){
 					cut[u]=1;
