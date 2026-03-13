@@ -9,12 +9,12 @@ void dfs1(int u,int fa,int d){
 		mx=d;
 		uu=u;
 	}
-    for(int i=0;i<a[u].size();i++)
-        if((!vis[a[u][i]])&&(a[u][i]!=fa))
-        {
+    for(int i=0;i<a[u].size();i++){
+    	if((!vis[a[u][i]])&&(a[u][i]!=fa)){
             vis[a[u][i]]=1;
             dfs1(a[u][i],u,d+b[u][i]);
         }
+	}
 }
 void dfs2(int u,int fa,int d){
     lst[u]=fa;
@@ -23,11 +23,12 @@ void dfs2(int u,int fa,int d){
 		mx=d;
 		vv=u;
 	}
-    for(int i=0;i<a[u].size();i++)
-        if((!vis[a[u][i]])&&(a[u][i]!=fa)){
+    for(int i=0;i<a[u].size();i++){
+    	if((!vis[a[u][i]])&&(a[u][i]!=fa)){
             vis[a[u][i]]=1;
             dfs2(a[u][i],u,d+b[u][i]);
         }
+	}
 }
 signed main(){
 	ios::sync_with_stdio(0);
