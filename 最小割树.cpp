@@ -1,152 +1,115 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #define int long long
 using namespace std;
-const int N=155,M=3005,inf=1e18;
-int T,n,m,Q,hed[N],ver[M<<1],nxt[M<<1],edg[M<<1],tot=1,s,t,ans;
-int dis[N],now[N],rs[N],rs1[N],rs2[N];
-queue<pair<int,int> >q;
-struct edge{
-	int v,w;
-};
-vector<edge> qwe[N];
-void add(int a,int b,int c){
-	ver[++tot]=b,nxt[tot]=hed[a],hed[a]=tot,edg[tot]=c;
+const int inf=1e9;
+int n,m,tot,root;
+struct Splay{
+    int fa,ch[3],val,size,sm,add;
+}a[1000010];
+void Update(int p){
+     a[p].sm=a[a[p].ch[0]].sm+a[a[p].ch[1]].sm+a[p].val;
+     a[p].size=a[a[p].ch[0]].size+a[a[p].ch[1]].size+1;  
 }
-int bfs(){
-	for(int i=1;i<=n;i++){
-		dis[i]=0;
+void pushdown(int p){
+    if(!a[p].add){
+    	return ;
 	}
-	queue<int>q;
-	q.push(s);
-	dis[s]=1;
-	now[s]=hed[s];
-	while(!q.empty()){
-		int u=q.front();
-		q.pop();
-		for(int i=hed[u];i;i=nxt[i]){
-			int v=ver[i];
-			if((!edg[i])||dis[v]){
-				continue;
-			}
-			q.push(v);
-			dis[v]=dis[u]+1;
-			now[v]=hed[v];
-			if(v==t){
-				return 1;
-			}
-		}
-	}
-	return 0;
+    if(a[p].ch[0]){
+        a[a[p].ch[0]].add+=a[p].add;
+        a[a[p].ch[0]].val+=a[p].add;
+        a[a[p].ch[0]].sm+=a[p].add*a[a[p].ch[0]].size;
+    }
+    if(a[p].ch[1]){
+        a[a[p].ch[1]].add+=a[p].add;
+        a[a[p].ch[1]].val+=a[p].add;
+        a[a[p].ch[1]].sm+=a[p].add*a[a[p].ch[1]].size;
+    }
+    a[p].add = 0;
 }
-int dinic(int u,int flow){
-	if(u==t){
-		return flow;
-	}
-	int i,k,rest=flow;
-	for(i=now[u];i;i=nxt[i]){
-		int v=ver[i];
-		if((!edg[i])||(dis[v]!=dis[u]+1)){
-			continue;
-		}
-		k=dinic(v,min(edg[i],rest));
-		if(!k){
-			dis[v]=0;
-			continue;
-		}
-		edg[i]-=k;
-		edg[i^1]+=k;
-		q.push(make_pair(i,k));
-		rest-=k;
-	}
-	now[u]=i;
-	return flow-rest;
+void push(int x,int goal){
+	//cout<<x<<endl;
+    if(x!=goal){
+        push(a[x].fa,goal);
+    }
+    pushdown(x);
+    return ;
 }
-int solve(int u,int v){
-	s=u,t=v;
-	int maxflow=0,flow=0;
-	while(bfs()){
-		while(flow=dinic(s,inf)){
-			maxflow+=flow;
-		}
-	}
-	while(!q.empty()){
-		pair<int,int> res=q.front();
-		q.pop();
-		edg[res.first]+=res.second;
-		edg[res.first^1]-=res.second;
-	}
-	return maxflow;
+void rotate(int x){
+    int y=a[x].fa;
+    int z=a[y].fa;
+    pushdown(z);
+    pushdown(y);
+    int kid=a[y].ch[1]==x;
+    a[z].ch[a[z].ch[1]==y]=x;
+    a[x].fa=z;
+    a[y].ch[kid]=a[x].ch[kid^1];
+    a[a[x].ch[kid^1]].fa=y;
+    a[x].ch[kid^1]=y;
+    a[y].fa=x;
+    Update(y);
+    Update(x);
+    return ;
 }
-void build(int l,int r){
-	int m1=0,m2=0;
-	if(l==r){
-		return;
+void splay(int x,int goal){
+	push(x,goal);
+    while(a[x].fa!=goal){
+        int y=a[x].fa;
+        int z=a[y].fa;
+        if(z!=goal){
+            (a[z].ch[1]==y)^(a[y].ch[1]==x)?rotate(x):rotate(y);
+        }
+        rotate(x);
+    }
+    if(goal==0){
+    	root=x;
 	}
-	int ans=solve(rs[l],rs[l+1]);
-	qwe[rs[l]].push_back({rs[l+1],ans});
-	qwe[rs[l+1]].push_back({rs[l],ans});
-	for(int i=l;i<=r;i++){
-		if(dis[rs[i]]!=0){
-			rs1[++m1]=rs[i];
-			continue;
-		}
-		rs2[++m2]=rs[i];
-	}
-	for(int i=1;i<=m1;i++){
-		rs[i+l-1]=rs1[i];
-	}
-	for(int i=1;i<=m2;i++){
-		rs[i+l+m1-1]=rs2[i];
-	}
-	build(l,l+m1-1);
-	build(l+m1,r);
+    return ;
 }
-void query(int u,int f,int mx,int mn,int qr){
-	for(int i=0;i<qwe[u].size();i++){
-		int v=qwe[u][i].v,w=qwe[u][i].w;
-		if(f==v){
-			continue;
-		}
-		if(v<mx&&min(mn,w)<=qr){
-			ans++;
-		}
-		query(v,u,mx,min(mn,w),qr);
-	}
+void add(int l,int r,int x){
+    splay(l,0);
+    splay(r+2,l);
+    a[a[r+2].ch[0]].add+=x;
+    a[a[r+2].ch[0]].val+=x;
+    a[a[r+2].ch[0]].sm+=(a[a[r+2].ch[0]].size)*x;
+    Update(r+2);
+    Update(l);
+    return ;
+}
+int ask(int l,int r){
+    splay(l,0);
+    splay(r+2,l);
+    return a[a[r+2].ch[0]].sm;
 }
 signed main(){
-	ios::sync_with_stdio(0);
-	cin>>T;
-	while(T--){
-		cin>>n>>m;
-		for(int i=1;i<=n;i++){
-			rs[i]=i;
-		}
-		for(int i=1;i<=m;i++){
-			int a,b,c;
-			cin>>a>>b>>c;
-			add(a,b,c);
-			add(b,a,c);
-		}
-		build(1,n);
-		cin>>Q;
-		while(Q--){
-			int qr;
-			cin>>qr;
-			ans=0;
-			for(int i=2;i<=n;i++){
-				query(i,0,i,inf,qr);
-			}
-			cout<<ans<<endl;
-		}
-		for(int i=1;i<=n;i++){
-			hed[i]=0;
-		}
-		tot=1;
-		for(int i=1;i<=n;i++){
-			qwe[i].clear();
-		}
-		cout<<endl;
-	}
-	return 0;
+    ios::sync_with_stdio(0);
+    cin>>n>>m;
+    root=1;
+    for(int i=2;i<=n+1;i++){
+        cin>>a[i].val;
+    }
+    for(int i=1;i<=n+2;i++){
+        if(i!=1){
+            a[i].fa=i-1;
+        }
+        if(i!=n+2){
+            a[i].ch[1]=i+1;
+        }
+    }
+    a[1].val=-inf;
+    a[n+2].val=inf;
+    for(int i=n+2;i>=1;i--){
+        Update(i);
+    }
+    for(int i=1;i<=m;i++){
+        int opt,l,r,x,y;
+        cin>>opt;
+        if(opt==1){
+            cin>>l>>r>>x;
+            add(l,r,x);
+        }
+        if(opt==2){
+            cin>>l>>r;
+            cout<<ask(l,r)<<endl;
+        }
+    }
 }
-
