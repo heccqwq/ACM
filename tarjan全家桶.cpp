@@ -130,7 +130,7 @@ void tarjan(int u){
 			tarjan(v);
 			low[u]=min(low[u],low[v]);
 		}
-		else if(ins[u]){
+		else if(ins[v]){
 			low[u]=min(low[u],dfn[v]);
 		}
 	}
