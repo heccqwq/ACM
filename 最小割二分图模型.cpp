@@ -1,4 +1,4 @@
-#include <bists/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 const int inf=1e9;
 int m,n,ver[10000010],hed[10000010],nxt[10000010],edg[10000010];
